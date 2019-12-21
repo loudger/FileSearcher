@@ -1,0 +1,9 @@
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\bin\Debug\FileSearher.exe.config
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\bin\Debug\FileSearher.exe
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\bin\Debug\FileSearher.pdb
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearcher.csprojAssemblyReference.cache
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearher.Form1.resources
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearher.Properties.Resources.resources
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearcher.csproj.GenerateResource.cache
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearher.exe
+C:\Users\Arthur\Desktop\buff\C#\FileSearher\FileSearher\obj\Debug\FileSearher.pdb

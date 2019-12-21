@@ -9,9 +9,14 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using System.Threading;
+using System.Runtime.InteropServices;
+
+
 
 namespace FileSearher
 {
+    
+
     public partial class Form1 : Form
     {
         private static bool is_pause = false; // если нажата пауза, то true
@@ -35,13 +40,12 @@ namespace FileSearher
 
         private void Start_Pause_Click(object sender, EventArgs e)
         {
-            search_files = new Thread(new ParameterizedThreadStart(AuxiliaryCreateDirectoryNode));
-
             if (!is_work)
             {
+                is_work = true;
+                search_files = new Thread(new ParameterizedThreadStart(AuxiliaryCreateDirectoryNode));
                 Start_Pause.Text = "Пауза";
                 _event = new ManualResetEvent(true);
-                is_work = true;
 
                 // ограничиваю возможность изменения формы
                 path_label.Enabled = false;
@@ -88,10 +92,11 @@ namespace FileSearher
         {
             // вспомогательный метод,чтобы перебросить все атрибуты в метод CreateDirectoryNode из auxiliary_class_object
             AuxiliaryClassObject x = (AuxiliaryClassObject)auxiliary_class_object;
-            CreateDirectoryNode(x.directoryInfo, x.filename_pattern, x.contain_str);
+            int count_of_processed_files = 0;
+            FindFiles(x.directoryInfo, x.filename_pattern, x.contain_str, count_of_processed_files);
         }
 
-        private void CreateDirectoryNode(DirectoryInfo directoryInfo, string filename_pattern, string contain_str)
+        private int FindFiles(DirectoryInfo directoryInfo, string filename_pattern, string contain_str, int count_of_processed_files)
         {
             
             _event.WaitOne();
@@ -101,7 +106,8 @@ namespace FileSearher
                 try
                 {
                     // проходит по всем каталогом внутри каталогов
-                    CreateDirectoryNode(directory, filename_pattern, contain_str);
+                    count_of_processed_files = FindFiles(directory, filename_pattern, contain_str, count_of_processed_files
+);
                 }
                 catch (System.UnauthorizedAccessException expt)
                 {
@@ -110,6 +116,14 @@ namespace FileSearher
             // проходит по всем файлам внутри каталога
             foreach (var file in directoryInfo.GetFiles(filename_pattern))
             {
+                _event.WaitOne();
+                count_of_processed_files++;
+                Action action = () =>
+                {
+                    current_file_label.Text = file.Name;
+                    count_of_files_label.Text = count_of_processed_files.ToString();
+                };
+                Invoke(action);
 
                 try
                 {
@@ -133,6 +147,7 @@ namespace FileSearher
                     // обработка исключения на случай, если не хватает прав, чтобы прочитать файл
                 }
             }
+            return count_of_processed_files;
         }
 
         private void CreateNode(string[] file_path, int deep, TreeNodeCollection cur_node = null)
@@ -195,15 +210,21 @@ namespace FileSearher
 
         private void dropping_bt_Click(object sender, EventArgs e)
         {
-            // должен прерывать процесс
-            search_files.Abort();
-            // очистка всей памяти в 3 этапа
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
             treeView1.Nodes.Clear();
             Start_Pause.Text = "Пуск";
             is_work = false;
+            current_file_label.Text = "";
+            count_of_files_label.Text = "";
+
+            // должен прерывать процесс
+            search_files.Abort();
+
+            // очистка всей памяти
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
         }
     }
 
